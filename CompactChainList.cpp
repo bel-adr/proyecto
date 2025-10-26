@@ -1,5 +1,4 @@
 #include "CompactChainList.h"
-#include<vector>
 
 //Operaciones constructoras
 CompactChainList::CompactChainList() {
@@ -33,7 +32,7 @@ CompactChainList::CompactChainList(CompactChainList &l2) {
   
   //Operaciones analizadoras
 int CompactChainList::size() {
-  return this -> s;
+  return s;
 };
 
 int CompactChainList::searchElement(Element &e) {
@@ -49,27 +48,50 @@ int CompactChainList::searchElement(Element &e) {
 };
 
 int CompactChainList::getConsecutiveOcurrences(vector<Element> &v) {
+  list<Element> l1 = this -> expand();
+  int ans = 0, count = 0;
   bool flag1 = false, flag2;
-  int count = 0, ans = 0;
-  CompactChainList v2(v);
-  for (list<pair<Element, int>>::iterator it1 = l.begin(); it1 != l.end() && !flag1 && !v.empty(); ++it1) {
+  for (list<Element>::iterator it = l1.begin(); it != l1.end() && !v.empty() && !flag1; ++it) {
     flag2 = false;
-    if (this -> s - count < v.size()) flag1 = true;
-    if (((*it1).first == v2.l.front().first && (*it1).second >= v2.l.front().second) && !flag1) {
-      list<pair<Element, int>>::iterator it2 = ++it1;
-      for (list<pair<Element, int>>::iterator it3 = ++v2.l.begin(); it3 != v2.l.end() && !flag2; ++it3) {
-	if ((it3 == --v2.l.end() && (*it2).first == (*it3).first && (*it2).second < (*it3).second) || *it2 != *it3)
-	  flag2 = true;
+    if (l1.size() - count < v.size()) flag1 = true;
+    if (!flag1 && *it == v[0]) {
+      list<Element>::iterator it2 = ++it;
+      for (int i = 1; i < v.size() && !flag2; ++i) {
+	if (*it2 != v[i]) flag2 = true;
 	++it2;
       }
       if (!flag2) ++ans;
     }
-    count += (*it1).second;
+    ++count;
   }
   return ans;
 };
 
 int CompactChainList::getIndexFirstConsecutiveOcurrence(vector<Element> &v) {
+  list<Element> l1 = this -> expand();
+  int ans = 0, count = 0, acc = 0;
+  bool flag1 = false, flag2, flag3 = false;
+  for (list<Element>::iterator it = l1.begin(); it != l1.end() && !v.empty() && !flag1 && !flag3; ++it) {
+    list<pair<Element, int>>::iterator indx = l.begin();
+    flag2 = false;
+    if (l1.size() - count < v.size()) flag1 = true;
+    if (!flag1 && *it == v[0]) {
+      list<Element>::iterator it2 = ++it;
+      for (int i = 1; i < v.size() && !flag2; ++i) {
+	if (*it2 != v[i]) flag2 = true;
+	++it2;
+      }
+      if (!flag2) flag3 = true;
+    }
+    ++count;
+    if (count - acc > (*indx).second) {
+      acc += (*indx).second;
+      ++ans;
+      ++indx;
+    }
+  }
+  if (!flag3) ans = l.size();
+  return ans;
 };
 
 int CompactChainList::getOcurrences(vector<Element> &v) {
@@ -82,10 +104,20 @@ CompactChainList CompactChainList::getLexicographicFusion(CompactChainList &l2) 
 };
 
 list<Element> CompactChainList::expand() {
+  list<Element> ans;
+  for (list<pair<Element, int>>::iterator it = l.begin(); it != l.end(); ++it)
+    for (int i = 0; i < (*it).second; ++i)
+      ans.push_back((*it).first);
+  return ans;
 };
 
   //Operaciones modificadoras
+
 void CompactChainList::set(int p, Element &e) {
+  list<pair<Element, int>>::iterator it = l.begin();
+  for (int i = 0; i < p; ++i)
+    ++it;
+  (*it).first = e;
 };
 
 void CompactChainList::removeFirstOcurrence(Element &e) {
