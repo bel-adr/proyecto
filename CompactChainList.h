@@ -27,7 +27,7 @@ class CompactChainList {
   int getIndexFirstConsecutiveOcurrence(vector<Element> &v);
   int getOcurrences(vector<Element> &v);
   int getIndexFirstOcurrence(vector<Element> &v);
-  CompactChainList getLexicographicFusion(CompactChainList &l2);
+  CompactChainList getLexicographicFusion(CompactChainList &oth);
   list<Element> expand();
 
   //Operaciones modificadoras
@@ -43,8 +43,8 @@ class CompactChainList {
   void lol();
 
   //Sobrecarga de operadores
-  bool operator+(CompactChainList &oth);
-  bool operator[](CompactChainList &oth);
+  CompactChainList operator+(CompactChainList &oth);
+  pair<Element, int>&  operator[](int indx);
   bool operator<(CompactChainList &oth);
   bool operator==(const CompactChainList &oth) const;
 };
