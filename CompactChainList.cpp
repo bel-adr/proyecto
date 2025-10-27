@@ -74,7 +74,6 @@ int CompactChainList::getIndexFirstConsecutiveOcurrence(vector<Element> &v) {
   int ans = 0, count = 0, acc = 0;
   bool flag1 = false, flag2, flag3 = false;
   for (list<Element>::iterator it = l1.begin(); it != l1.end() && !v.empty() && !flag1 && !flag3; ++it) {
-    list<pair<Element, int>>::iterator indx = l.begin();
     flag2 = false;
     if (l1.size() - count < v.size()) flag1 = true;
     if (!flag1 && *it == v[0]) {
@@ -86,13 +85,11 @@ int CompactChainList::getIndexFirstConsecutiveOcurrence(vector<Element> &v) {
       if (!flag2) flag3 = true;
     }
     ++count;
-    if (count - acc > (*indx).second) {
-      acc += (*indx).second;
-      ++ans;
-      ++indx;
-    }
   }
-  if (!flag3) ans = l.size();
+  if (!flag3)
+    ans = l.size();
+  else
+    ans = --count;
   return ans;
 };
 
@@ -237,8 +234,8 @@ bool CompactChainList::operator<(CompactChainList &oth) {
 
 bool CompactChainList::operator==(const CompactChainList &oth) const {
   bool ans = this -> s == oth.s;
-  list<pair<Element, int>>::iterator it2 = oth.l.begin();
-  for (list<pair<Element, int>>::iterator it1 = l.begin(); it1 != l.end() && ans; ++it1)
+  list<pair<Element, int>>::const_iterator it2 = oth.l.cbegin();
+  for (list<pair<Element, int>>::const_iterator it1 = l.cbegin(); it1 != l.cend() && ans; ++it1)
     if ((*it1) != (*it2)) ans = false;
   return ans;
 };
