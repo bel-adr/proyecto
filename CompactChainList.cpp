@@ -1,5 +1,6 @@
 #include "CompactChainList.h"
 #include<algorithm>
+#include<cstdio>
 
 //Operaciones constructoras
 CompactChainList::CompactChainList() {
@@ -22,6 +23,8 @@ CompactChainList::CompactChainList(vector<Element> &v) {
     }
     this -> s += 1;
   }
+  if (!v.empty())
+    this -> l.push_back(make_pair(v.at(v.size() - 1), count));
 };
 
 CompactChainList::CompactChainList(CompactChainList &l2) {
@@ -94,9 +97,13 @@ int CompactChainList::getIndexFirstConsecutiveOcurrence(vector<Element> &v) {
 };
 
 int CompactChainList::getOcurrences(vector<Element> &v) {
+  int ans;
+  return ans;
 };
 
 int CompactChainList::getIndexFirstOcurrence(vector<Element> &v) {
+  int ans;
+  return ans;
 };
 
 CompactChainList CompactChainList::getLexicographicFusion(CompactChainList &oth) {
@@ -207,7 +214,10 @@ void CompactChainList::sortVectirCCL(vector<CompactChainList> &v) {
 };
 
 void CompactChainList::lol() {
-  //hola mundo
+  list<pair<Element, int>>::iterator it;
+  for (it = l.begin(); it != --l.end(); ++it)
+    printf("<%d, %d>, ", (*it).first, (*it).second);
+  printf("<%d, %d>\n", (*it).first, (*it).second);
 };
 
 //Sobrecarga de operadores
