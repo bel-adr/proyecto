@@ -44,7 +44,7 @@ class CompactChainList {
 
   //Sobrecarga de operadores
   CompactChainList operator+(CompactChainList &oth);
-  Element  operator[](int indx);
+  Element operator[](int indx);
   bool operator<(CompactChainList &oth);
   bool operator==(const CompactChainList &oth) const;
 };

@@ -23,11 +23,14 @@ CompactChainList::CompactChainList(vector<Element> &v) {
     }
     this -> s += 1;
   }
-  if (!v.empty())
+  if (!v.empty()) {
     this -> l.push_back(make_pair(v.at(v.size() - 1), count));
+    this -> s += 1;
+  }
 };
 
 CompactChainList::CompactChainList(CompactChainList &l2) {
+  this -> s = 0;
   for (list<pair<Element, int>>::iterator it = l2.l.begin(); it != l2.l.end(); ++it) {
     this -> l.push_back(*it);
     this -> s += (*it).second;
@@ -40,14 +43,14 @@ int CompactChainList::size() {
   return s;
 };
 
-int CompactChainList::searchElement(Element &e) {
+int CompactChainList::searchElement(Element e) {
   int ans = 0;
   bool flag = false;
   for (list<pair<Element, int>>::iterator it = l.begin(); it != l.end() && !flag; ++it) {
     if ((*it).first == e)
       flag = true;
     else
-      ++ans;
+      ans += (*it).second;
   }
   return ans;
 };
@@ -146,14 +149,48 @@ list<Element> CompactChainList::expand() {
 
 //Operaciones modificadoras
 
-void CompactChainList::set(int p, Element &e) {
-  list<pair<Element, int>>::iterator it = l.begin();
-  for (int i = 0; i < p; ++i)
-    ++it;
-  (*it).first = e;
+void CompactChainList::set(int p, Element e) {
+  int i = 0, rem;
+  list<pair<Element, int>>::iterator it = l.begin(), aux;
+  if (p <= s/2) {
+    while (i < p && p < s) {
+      i += (*it).second;
+      if (i <= p) ++it;
+    }
+  } else {
+    /*
+    it = --l.end();
+    rem = s - p;
+    while (i < p && p < s) {
+      i += (*it).second;
+      if (i <= p) ++it;
+    }
+    */
+  }
+  aux = it;
+  if ((*it).first != e && (*it).second > 1 && p < s) {
+    if (i == p)
+      if (it != --l.end())
+	l.insert(++aux, make_pair((*it).first, (*it).second - 1));
+      else
+	l.push_back(make_pair((*it).first,  (*it).second - 1));
+    else if (i > p && i - (*it).second  + 1 == p) 
+      l.insert(it, make_pair((*it).first, (*it).second - 1));
+    else {
+      rem = p - (i - (*it).second);
+      l.insert(it, make_pair((*it).first, rem));
+      if (it != --l.end())
+	l.insert(++aux, make_pair((*it).first, (*it).second - rem));
+      else
+	l.push_back(make_pair((*it).first, (*it).second - rem));
+    }
+    (*it).first = e;
+    (*it).second = 1;
+  } else if ((*it).first != e && p < s)
+    (*it).first = e;
 };
 
-void CompactChainList::removeFirstOcurrence(Element &e) {
+void CompactChainList::removeFirstOcurrence(Element e) {
   bool flag;
   for (list<pair<Element, int>>::iterator it = l.begin(); it != l.end() && !flag; ++it) {
     if ((*it).first == e) {
@@ -166,7 +203,7 @@ void CompactChainList::removeFirstOcurrence(Element &e) {
   }
 };
 
-void CompactChainList::removeAllOcurrences(Element &e) {
+void CompactChainList::removeAllOcurrences(Element e) {
   for (list<pair<Element, int>>::iterator it = l.begin(); it != l.end(); ++it) {
     if ((*it).first == e)
       l.erase(it);
@@ -180,28 +217,28 @@ void CompactChainList::removeBlockPosition(int p) {
   l.erase(it);
 };
 
-void CompactChainList::insertElement(int p, Element &e) {
+void CompactChainList::insertElement(int p, Element e) {
   list<pair<Element, int>>::iterator it = l.begin();
   for (int i = 0; i < p; ++i)
     ++it;
   //l.insert(it, e);
 };
 
-void CompactChainList::modifyAllOcurrences(Element &e1, Element &e2) {
+void CompactChainList::modifyAllOcurrences(Element e1, Element e2) {
   for (list<pair<Element, int>>::iterator it = l.begin(); it != l.end(); ++it) {
     if ((*it).first == e1)
       (*it).first = e2;
   }
 };
 
-void CompactChainList::push_front(Element &e, int count) {
+void CompactChainList::push_front(Element e, int count) {
   if (l.front().first == e)
     l.front().second += count;
   else
     l.push_front(make_pair(e, count));
 };
 
-void CompactChainList::push_back(Element &e, int count) {
+void CompactChainList::push_back(Element e, int count) {
   if (l.back().first == e)
     l.back().second += count;
   else
@@ -215,9 +252,13 @@ void CompactChainList::sortVectirCCL(vector<CompactChainList> &v) {
 
 void CompactChainList::lol() {
   list<pair<Element, int>>::iterator it;
+  printf("<");
   for (it = l.begin(); it != --l.end(); ++it)
-    printf("<%d, %d>, ", (*it).first, (*it).second);
-  printf("<%d, %d>\n", (*it).first, (*it).second);
+    printf("(%d, %d), ", (*it).first, (*it).second);
+  if (!l.empty())
+    printf("(%d, %d)>\n", (*it).first, (*it).second);
+  else
+    printf(">\n");
 };
 
 //Sobrecarga de operadores
@@ -227,11 +268,12 @@ CompactChainList CompactChainList::operator+(CompactChainList &oth) {
   return ans;
 };
 
-pair<Element, int>& CompactChainList::operator[](int indx) {
+Element CompactChainList::operator[](int indx) {
+  Element ans;
   list<pair<Element, int>>::iterator it = l.begin();
   for (int i = 0; i < indx; ++i)
     ++it;
-  return *it;
+  return ans;
 };
 
 bool CompactChainList::operator<(CompactChainList &oth) {
