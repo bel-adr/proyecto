@@ -152,21 +152,20 @@ list<Element> CompactChainList::expand() {
 void CompactChainList::set(int p, Element e) {
   int i = 0, rem;
   list<pair<Element, int>>::iterator it = l.begin(), aux;
-  if (p <= s/2) {
+  //if (p <= s/2) {
     while (i < p && p < s) {
       i += (*it).second;
       if (i <= p) ++it;
     }
-  } else {
-    /*
+    /*} else {
     it = --l.end();
     rem = s - p;
-    while (i < p && p < s) {
+    while (i < rem && p < s) {
       i += (*it).second;
-      if (i <= p) ++it;
+      if (i <= rem) --it;
     }
-    */
   }
+    */
   aux = it;
   if ((*it).first != e && (*it).second > 1 && p < s) {
     if (i == p)
