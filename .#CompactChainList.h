@@ -1,1 +1,0 @@
-isabeladrada@MacBook-Pro-de-Isabel.local.35262:1760710831
